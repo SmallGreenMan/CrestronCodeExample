@@ -1,0 +1,575 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "NecPaneControlProtocol"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   Pull,_skip_,Get_Power,PowerOn,PowerOff,PowerTogle,Get_Volume,Vol_Up,Vol_Down,MuteTogle,
+			   MuteOn,MuteOff,GetMute,_skip_,Get_Input,Inp[14],_skip_,_skip_,_skip_;
+ ANALOG_INPUT Volume_in,_skip_,_skip_;
+ STRING_INPUT rx[1000],Commandos[100];
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   _skip_,_skip_,_skip_,PowerOn_fb,PowerOff_fb,_skip_,_skip_,_skip_,_skip_,Mute_fb,
+			   _skip_,_skip_,_skip_,_skip_,_skip_,Inp_fb[14],_skip_,_skip_,_skip_;
+
+ ANALOG_OUTPUT Volume_Out,_skip_;
+ STRING_OUTPUT Volume_txt,tx,Debug;
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+// INTEGER_PARAMETER
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+ STRING_PARAMETER ID[1];
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER Power, Volume, Mute, inputMem, HoldFlag;
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+	string powerMode[30];
+	string powerModeControlFb[30];
+	string muteFb[30];
+	string muteControlFb[30];
+	string VolControlFB[30];
+	string InputFb[30];
+	string VolFB[30];
+	string InputControlFb[30];
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+Integer_Function Calc_BCC(string inTxt)
+{
+	integer BCC;
+	integer N;
+	String txt[30];
+	
+	txt = inTxt;
+
+	While(len(txt))
+	{
+		N = GetC(txt);
+		BCC = BCC^N;			
+	}
+         
+	debug = itoa(BCC);
+    Return (BCC);
+}
+
+      
+Function Get_Vol_Func()
+{
+	string txt[30];
+	//string cmd[30];	
+    // \x010A0C06\x020062\x03\x01\x0D      
+	txt = "0A0C06\x020062\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));	
+}
+Function Get_Inp_Func()
+{
+	string txt[30];
+	//string cmd[30];	
+    //       0C06\x020060\x03      
+	txt = "0A0C06\x020060\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));	
+}
+
+Function Get_Mute_Func()
+{
+	string txt[30];
+	//string cmd[30];	
+        //"0A0C06\x02008D\x38\x44\x03";
+	txt = "0A0C06\x02008D\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));	
+}
+
+Function Get_Power_Func()
+{
+	string txt[30];
+	//string cmd[30];	
+             
+	txt = "0A0A06\x0201D6\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+}
+
+
+
+
+Function PowerCompareFb (integer Data)
+{
+		switch(Data)
+		{
+        	Case (49):
+			{
+				PowerOff_fb = 0;
+            	PowerOn_fb = 1;					
+			}
+        	Case (50):
+			{
+            	PowerOn_fb = 0;
+				PowerOff_fb = 1;
+			}
+        	Case (51):
+			{
+            	PowerOn_fb = 0;
+				PowerOff_fb = 1;	
+			}
+        	Case (52):
+			{
+            	PowerOn_fb = 0;
+				PowerOff_fb = 1;
+			}
+		}
+}
+Function MuteCompareFb (integer Data)
+{
+		switch(Data)
+		{
+        	Case (48):
+			{
+				Mute_fb = 0;
+				Mute = 0;
+			}
+        	Case (49):
+			{
+            	Mute_fb = 1;
+				Mute = 1;
+			}
+        	Case (50):
+			{
+            	Mute_fb = 0;
+				Mute = 0;
+			}
+		}
+}
+     
+Function VolUpFunc ()
+{
+	string txt[30];
+	//string cmd[30];
+	String temp[50],temp2[3];
+
+	if (Volume < 100)
+	{
+		Volume = Volume + 1;
+		MakeString(temp2,"%02X",Volume);
+	
+		makestring(txt,"0A\x30\x45\x30\x41\x02\x30\x30\x36\x32\x30\x30%s%s\x03",mid(temp2,1,1),mid(temp2,2,1));
+		makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+
+				Mute_fb = 0;
+				Mute = 0;
+	}
+}
+ 
+Function VolDownFunc ()
+{
+	string txt[30];
+	//string cmd[30];
+	String temp[50],temp2[3];
+
+	if (Volume > 0)
+	{
+		Volume = Volume - 1;
+		MakeString(temp2,"%02X",Volume);
+	
+		makestring(txt,"0A\x30\x45\x30\x41\x02\x30\x30\x36\x32\x30\x30%s%s\x03",mid(temp2,1,1),mid(temp2,2,1));
+		makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+
+				Mute_fb = 0;
+				Mute = 0;
+	}	
+}
+
+     
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+PUSH Pull
+{
+	Delay(100);
+	Get_Power_Func();
+				Delay(100);
+					Get_Vol_Func();
+				Delay(100);
+					Get_Inp_Func();
+				Delay(100);
+					Get_Mute_Func();
+}
+// Set Volume \x010A0E0A\x0200620043\x03w\x0D   43 - 67
+CHANGE  Volume_in
+{
+	string txt[30];
+	String temp[50],temp2[3];
+	MakeString(temp2,"%02X",Volume_in);
+	//trace("Volume in hex: temp2 = %s",temp2);
+	Volume = Volume_in;	
+    //	                    
+	makestring(txt,"0A\x30\x45\x30\x41\x02\x30\x30\x36\x32\x30\x30%s%s\x03",mid(temp2,1,1),mid(temp2,2,1));
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+}
+
+PUSH Vol_Up
+{
+	HoldFlag = 1;
+	
+	While(HoldFlag = 1)
+	{
+		VolUpFunc ();
+		delay(30);
+	}	
+}
+RELEASE Vol_Up, Vol_Down
+{
+	HoldFlag = 0;
+}
+
+PUSH Vol_Down
+{
+	HoldFlag = 1;
+	
+	While(HoldFlag = 1)
+	{
+		VolDownFunc ();
+		delay(30);
+	}
+}
+
+PUSH Get_Volume
+{
+	Get_Vol_Func();	
+}
+
+PUSH Get_Input
+{
+	Get_Inp_Func();	
+}
+PUSH Inp
+{
+	string txt[30];
+	integer but;
+
+	but = GetLastModifiedArrayIndex ();
+
+	Switch(but)
+	{
+		case(0)://No source
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x30\x03";
+		}
+    	case(1)://VGA
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x31\x31\x03";
+		}
+		case(2)://VGA/HV
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x300D\x03";
+		}
+		case(3)://DVI
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x33\x03";
+		}
+		case(4)://Video1
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x35\x03";
+		}
+		case(5)://Video2
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x36\x03";
+		}
+		case(6)://Svideo
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x37\x03";
+		}
+		case(7)://Component1
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x43\x03";
+		}
+		case(8)://Component2
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x34\x03";
+		}
+		case(9)://TV
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x41\x03";
+		}
+		case(10)://HDMI1
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x31\x31\x03";
+		}
+		case(11)://HDMI2
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x31\x32\x03";
+		}
+		case(12)://HDMI3
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x31\x33\x03";
+		}
+		case(13)://Display port
+		{
+        	txt = "0A\x30\x45\x30\x41\x02\x30\x30\x36\x30\x30\x30\x30\x46\x03";
+		}
+	}	
+
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+
+	Delay(200);
+		Get_Inp_Func();
+}
+
+
+
+PUSH MuteOn
+{
+	string txt[30];
+	//string cmd[30];	
+             
+	txt = "0A0E0A\x02008D0001\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));	
+}
+PUSH MuteOff
+{//
+	string txt[30]; 
+	//string cmd[30];	
+             
+	txt = "0A0E0A\x02008D0000\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));	
+}
+PUSH GetMute
+{
+	Get_Mute_Func();	
+}
+
+    
+Push MuteTogle
+{
+	string txt[30];
+	if (Mute = 1)
+		txt = "0A0E0A\x02008D0000\x03";
+	else
+		txt = "0A0E0A\x02008D0001\x03";
+
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+}
+
+
+PUSH PowerOn
+{
+	string txt[30];
+	//string cmd[30];	
+             
+	txt = "\x30\x41\x30\x41\x30\x43\x02\x43\x32\x30\x33\x44\x36\x30\x30\x30\x31\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+}
+PUSH PowerOff
+{
+	string txt[30];
+	//string cmd[30];	
+             
+	txt = "\x30\x41\x30\x41\x30\x43\x02\x43\x32\x30\x33\x44\x36\x30\x30\x30\x34\x03";
+	makestring(tx,"\x01%s%c\x0D",txt,Calc_BCC(txt));
+}
+
+
+PUSH Get_Power
+{
+	Get_Power_Func ();
+}
+
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+CHANGE  Commandos
+{
+	makestring(tx,"\x01%s%c\x0D",Commandos,Calc_BCC(Commandos));
+}
+
+CHANGE rx
+{
+	string mini[30];
+	integer Data, i;
+
+	if (find(powerMode, rx))
+	{
+		mini = remove(powerMode, rx);
+		Data = GetC(rx);
+        
+		debug = itoa(Data);
+		PowerCompareFb(Data);
+	}
+	else if (find(powerModeControlFb, rx))
+	{
+		mini = remove(powerModeControlFb, rx);
+		Data = GetC(rx);
+        
+		debug = itoa(Data);
+		PowerCompareFb(Data);
+	}
+
+
+	else if (find(muteFb, rx))
+	{
+		mini = remove(muteFb, rx);
+		Data = GetC(rx);
+        
+		debug = itoa(Data);
+		MuteCompareFb(Data);
+	}
+	else if (find(muteControlFb, rx))
+	{
+		mini = remove(muteControlFb, rx);
+		Data = GetC(rx);
+        
+		debug = itoa(Data);
+		MuteCompareFb(Data);
+	}
+
+
+	else if (find(VolControlFB, rx))
+	{
+		mini = remove(VolControlFB, rx);
+        
+		debug = rx;
+
+		//Data = GetC(rx);
+		Volume = hextoi(mid(rx,1,2));
+		Volume_Out = Volume;
+		Volume_txt = itoa(Volume);
+	}//VolFB
+	else if (find(VolFB, rx))
+	{
+		mini = remove(VolFB, rx);
+        
+		debug = rx;
+
+		//Data = GetC(rx);
+		Volume = hextoi(mid(rx,1,2));
+		Volume_Out = Volume;
+		Volume_txt = itoa(Volume);
+	}
+
+	else if (find(InputControlFb, rx))
+	{
+		mini = remove(InputControlFb, rx);
+        
+		debug = rx;
+
+		//Data = GetC(rx);
+		mini = mid(rx,1,2);
+		if (mini = "11")
+			inputMem = 1;
+		else if (mini = "0D")
+			inputMem = 2;
+
+        for(i = 1 to 14)
+			Inp_fb[i] = 0;
+		Inp_fb[inputMem] = 1;
+	}
+	else if (find(InputFb, rx))
+	{
+		mini = remove(InputFb, rx);
+        
+		debug = rx;
+
+		//Data = GetC(rx);
+		mini = mid(rx,1,2);
+		if (mini = "11")
+			inputMem = 1;
+		else if (mini = "0D")
+			inputMem = 2;
+
+        for(i = 1 to 14)
+			Inp_fb[i] = 0;
+		Inp_fb[inputMem] = 1;
+	}
+
+}
+
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+
+Function Main()
+{
+	HoldFlag = 0;
+
+	powerMode =          "\x01\x30\x30\x41\x42\x31\x32\x02\x30\x32\x30\x30\x44\x36\x30\x30\x30\x30\x30\x34\x30\x30\x30";
+	powerModeControlFb = "\x01\x30\x30\x41\x42\x30\x45\x02\x30\x30\x43\x32\x30\x33\x44\x36\x30\x30\x30";
+
+	muteFb = 			 "\x0100AD12\x0200008D000002000";
+    muteControlFb = 	 "\x0100AF12\x0200008D000002000";
+                                                                                        
+
+	// \x0100AD12\x020000600000110011\x03\x01\x0D	- 	
+	// 					  \x0100AD12\x0200006000001100 01\x03\x00\x0D
+	InputFb =		     "\x0100AD12\x0200006000001100";//\x0100AD12\x020000600000110011
+	InputControlFb =     "\x0100AF12\x0200006000001100";
+       
+    VolFB        =       "\x0100AD12\x0200006200006400";
+	VolControlFB =       "\x0100AF12\x0200006200006400";	//\x0100AF12\x020000620000640064 00 - 64
+				   //\x0100AF12\x020000620000640064\x03\x01\x0D
+}
+
+

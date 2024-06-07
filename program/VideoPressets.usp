@@ -1,0 +1,171 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "VideoPressets"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+  (Uncomment and declare inputs and outputs as needed)
+*******************************************************************************************/
+DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			  PressetsPress[10],
+			 _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+ ANALOG_INPUT In[320];
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				SaweOk,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+ ANALOG_OUTPUT Out[320];
+// STRING_OUTPUT 
+/*******************************************************************************************
+  Parameters
+  (Uncomment and declare parameters as needed)
+*******************************************************************************************/
+ INTEGER_PARAMETER maxIn;
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+INTEGER HoldFlag, i, but;
+NONVOLATILE Integer Memory[10][320];
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+/*
+Function MyFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+}
+*/
+/*******************************************************************************************
+  Event Handlers
+  (Uncomment and declare additional event handlers as needed)
+*******************************************************************************************/
+
+PUSH PressetsPress
+{
+	but = GetLastModifiedArrayIndex ();
+
+	HoldFlag = 1;
+	Wait(200, WaitSawe)
+	{
+    	if (HoldFlag = 1)
+		{
+        	HoldFlag = 0;
+			SaweOk = 1;
+
+			For(i = 1 to maxIn)
+				Memory[but][i] = In[i];
+
+			Delay(100);
+			SaweOk = 0;			
+		}
+	}	
+}
+
+
+
+RELEASE PressetsPress
+{
+	but = GetLastModifiedArrayIndex ();
+	
+    	if (HoldFlag = 1)
+		{
+        	HoldFlag = 0;
+			CancelWait(WaitSawe	);		
+			SaweOk = 1;
+
+			For(i = 1 to maxIn)
+			{
+				Out[i] = Memory[but][i];
+				Delay(10);
+			}
+
+			Delay(100);
+			SaweOk = 0;			
+		}
+}
+
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

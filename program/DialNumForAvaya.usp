@@ -1,0 +1,241 @@
+ #SYMBOL_NAME "DialNumForAvaya"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT CallKey,DisconectKey,DeleteKey,_skip_,CallFB,_skip_,_skip_,_skip_,_skip_,NumpadKey[13];
+// ANALOG_INPUT 
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT CallKeyIs,_skip_,DeleteIs,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,NumpadKeyIs[13],_skip_;
+// ANALOG_OUTPUT 
+ STRING_OUTPUT TxtOut,Tx;
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER but,holdFlag;
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+ STRING numForDial[20];
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+/*
+Function MyFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+}
+*/
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+
+PUSH NumpadKey
+{
+    but = GetLastModifiedArrayIndex ();
+	if (CallFB=1)
+	{
+     	pulse(5,NumpadKeyIs[but]);
+	}
+	else
+	{
+     	if (but<10)
+		{
+         	numForDial = numForDial + itoa(but);
+		}
+		else
+		{
+			holdFlag = 1;
+			Wait(100,HoldWait)
+			{
+             	if (Holdflag = 1)
+				{
+                 	Holdflag = 0;
+		         	switch(but)
+					{
+		                case (10):
+						{
+							numForDial = numForDial + " ";
+						}
+						case (11):
+						{
+							numForDial = numForDial + "*";
+						}
+						case (12):
+						{
+							numForDial = numForDial + "@";
+						}
+					}
+				}
+				TxtOut = numForDial;
+			}	
+		}
+		TxtOut = numForDial;
+	}
+}
+
+RELEASE NumpadKey
+{
+	if (CallFB<>1)
+	{
+	    but = GetLastModifiedArrayIndex ();
+	  	if (Holdflag = 1)
+		{
+			Cancelwait(HoldWait);
+	       	Holdflag = 0;         	
+			switch(but)
+			{
+	               case (10):
+					{
+						numForDial = numForDial + "0";
+					}
+					case (11):
+					{
+						numForDial = numForDial + ".";
+					}
+					case (12):
+					{
+						numForDial = numForDial + "#";
+					}
+			}
+		}
+		TxtOut = numForDial;
+	}
+}
+
+PUSH DeleteKey
+{
+	if (CallFB=1)
+	{
+     	pulse(5,NumpadKeyIs[but]);
+	}
+	else
+	{
+		holdFlag = 1;
+		Wait(200,HoldWait2)
+		{
+           	if (Holdflag = 1)
+			{
+				numForDial = "";
+				TxtOut = numForDial;
+			}
+		}
+
+	}		
+}
+
+
+RELEASE DeleteKey
+{
+	if (CallFB=1)
+	{
+		pulse(5,DeleteIs);		
+	}
+	else
+	{
+	    but = GetLastModifiedArrayIndex ();
+	  	if (Holdflag = 1)
+		{
+			Cancelwait(HoldWait2);
+	       	Holdflag = 0;
+			if (len(numForDial)>0)
+			{
+				numForDial = mid(numForDial,1,len(numForDial)-1);
+				TxtOut = numForDial;
+			}      
+		}
+	}
+}
+   
+
+Push CallKey
+{
+ 	if (len(numForDial)>0)
+	{
+     	//tx = "AT[&CD181"+numForDial+"\n";
+		tx = "mc call auto "+numForDial+" 16\n";
+	}
+	else
+	{
+     	pulse(5,CallKeyIs);
+	}
+}
+
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

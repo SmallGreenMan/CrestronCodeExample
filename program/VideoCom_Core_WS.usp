@@ -1,0 +1,200 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "VideoCom_Core_WS"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,CloseInPP,_skip_,
+			  Out[3],_skip_,_skip_,_skip_,_skip_,_skip_,InOff[1],_skip_,
+			  inDef[8],_skip_,
+			  inPcTm[8],_skip_,_skip_,_skip_,
+			  in[256];//,
+			  //_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			  //ClosePcSelectPP[1],_skip_,_skip_,_skip_,_skip_,_skip_,
+			  //SelectPcPP[16],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_
+			  //;
+// ANALOG_INPUT 
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,In_PP,_skip_,
+				_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+ ANALOG_OUTPUT  out_is[256];
+// STRING_OUTPUT 
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+ INTEGER_PARAMETER _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				   OutOndex[3],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				   InIndex[8],_skip_,InIndexTm[8];
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+// STRING_PARAMETER
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER inF, outF;
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+/*
+Function MyFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+}
+*/
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+PUSH Out
+{
+	integer but;
+
+	but = GetLastModifiedArrayIndex ();
+
+	In_PP = 1;
+	
+	outF = OutOndex[but];
+}
+    
+Push inPcTm
+{
+	integer but;
+
+	but = GetLastModifiedArrayIndex ();
+
+	In_PP = 0;
+
+	inF = InIndexTm[but];
+
+	out_is[outF] = inF;
+}
+
+Push inDef
+{
+	integer but;
+
+	but = GetLastModifiedArrayIndex ();
+
+	In_PP = 0;
+
+	inF = InIndex[but];
+
+	out_is[outF] = inF;
+}
+
+Push in
+{
+	integer but;
+
+	but = GetLastModifiedArrayIndex ();
+
+	In_PP = 0;
+
+	out_is[outF] = but;
+}
+
+Push InOff
+{
+	In_PP = 0;
+
+	out_is[outF] = 0;
+}
+
+
+Push CloseInPP
+{
+	In_PP = 0;
+}
+
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

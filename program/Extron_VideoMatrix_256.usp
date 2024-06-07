@@ -1,0 +1,385 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "Extron_VideoMatrix_256"
+// #HINT ""
+ #DEFINE_CONSTANT MaxOut 256
+ #DEFINE_CONSTANT DelayTerm 5
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+// #ENCODING_ASCII
+// #ENCODING_UTF16
+// #ENCODING_INHERIT_FROM_PARENT
+// #ENCODING_INHERIT_FROM_PROGRAM
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			  Pull,HeartBeat,_skip_,EnableUsbConnection,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			  usbConnect[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			  trash[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+ ANALOG_INPUT Selected_In_Analog,_skip_,_skip_,_skip_,Control_In[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+// STRING_INPUT 
+ BUFFER_INPUT RX[1][65353];
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				_skip_,_skip_,_skip_,EnableUsbConnection_fb,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				usbConnect_is[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			  	ShowUsbButton[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+ ANALOG_OUTPUT Control_Out[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   Img_Is[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_;
+ STRING_OUTPUT Text_Is[MaxOut],_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   TX[1], Debug[1];
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+ INTEGER_PARAMETER
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+ImgNum[MaxOut];
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+ STRING_PARAMETER
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,NameTxtOff[200],_skip_,
+NameTxt[MaxOut][200],
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+InUsbIndex[MaxOut][1],
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+OutUsbIndex[MaxOut][1],_skip_,
+Password[1][20];
+/*******************************************************************************************
+  Structure Definitions
+*******************************************************************************************/
+                                
+/*
+STRUCTURE MyStructUsb
+{
+	integer usb;
+	integer pc;	
+}
+
+MyStructUsb InUsbData[MaxOut];
+MyStructUsb OutUsbData[MaxOut];
+*/
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER flagFB, AutoUsb;
+ INTEGER VideoFB[MaxOut], AudioFB[MaxOut];
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+
+Function GetInfo()
+{
+    integer i;
+
+	tx[1] = "w3cv\n";
+	Delay(10);
+	For(i = 1 to MaxOut)
+	{
+    	tx[1] = itoa(i)+"!"; 
+		Delay(5);
+	}	
+}
+           
+Function StartUsbComparation ()
+{
+	integer in, out;
+	integer inIndex;
+	integer outIndex;
+             
+	For(out = 1 to MaxOut)
+	{
+		outIndex = atoi(OutUsbIndex[Out]);
+		inIndex = 0;
+		if (VideoFB[out]>0)
+			inIndex = atoi(InUsbIndex[VideoFB[out]]);
+        
+		if ((out = 7)||(out = 8)||(out = 9))
+			Debug[1] = "<<<<<<<<<<<<<<< USB inIndex = "+itoa(inIndex)+" outIndex = "+itoa(outIndex)+ " VideoFB[outIndex] = "+itoa(VideoFB[outIndex])+" VideoFB[inIndex] = "+itoa(VideoFB[inIndex]);
+            
+		if (outIndex>0)
+		{
+			if (inIndex>0)
+			{
+				ShowUsbButton[out] = 1;
+
+				if ((VideoFB[inIndex] = outIndex)&&(VideoFB[outIndex] = inIndex))
+					usbConnect_is[out] = 1;
+				else
+					usbConnect_is[out] = 0;
+			}
+			Else
+			{
+	        	ShowUsbButton[out] = 0;
+			}
+		}
+		Else
+		{
+	       	ShowUsbButton[out] = 0;
+		}
+	}
+}
+Function StartUsbComparationWait ()
+{
+	Wait(80, UsbComparationWait)
+		StartUsbComparation ();
+		
+}
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+          
+Push EnableUsbConnection
+{
+	if (AutoUsb = 1)
+	{
+    	AutoUsb = 0;
+		EnableUsbConnection_fb = 0;
+	}
+	else
+	{
+    	AutoUsb = 1;
+		EnableUsbConnection_fb = 1;
+	}
+}
+PUSH HeartBeat
+{
+	tx[1] = "!";//"1!";
+}
+PUSH Pull
+{
+   // Delay(1000);
+	//GetInfo();
+}
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+push usbConnect
+{
+    Integer but;
+	integer inIndex;
+	integer outIndex;
+
+	but = GetLastModifiedArrayIndex ();
+    
+	inIndex = atoi(InUsbIndex[VideoFB[but]]);
+	outIndex = atoi(OutUsbIndex[but]);
+
+	if (outIndex>0)
+		if (inIndex>0)
+		{
+			Delay(DelayTerm);
+        	tx[1] = itoa(inIndex)+"*"+itoa(outIndex)+"!";
+			Delay(DelayTerm);
+			tx[1] = itoa(outIndex)+"*"+itoa(inIndex)+"!";
+		}
+}
+
+CHANGE Control_In
+{
+    Integer but;
+	integer inIndex;
+	integer outIndex;
+
+	but = GetLastModifiedArrayIndex ();
+    
+	inIndex = atoi(InUsbIndex[VideoFB[but]]);
+	outIndex = atoi(OutUsbIndex[but]);
+	if (inIndex>0)
+	{
+		//tx[1] = "0*"+itoa(inIndex)+"!";
+		//Delay(DelayTerm);
+		//tx[1] = "0*"+itoa(outIndex)+"!";
+	}
+     
+	Delay(DelayTerm);
+	tx[1] = itoa(Control_In[but])+"*"+itoa(but)+"!";
+                    
+	inIndex = atoi(InUsbIndex[Control_In[but]]);
+           
+	if (AutoUsb>0)
+		if (outIndex>0)
+			if (inIndex>0)
+			{
+				Delay(DelayTerm);
+	        	tx[1] = itoa(inIndex)+"*"+itoa(outIndex)+"!";
+				Delay(DelayTerm);
+				tx[1] = itoa(outIndex)+"*"+itoa(inIndex)+"!";
+			}
+}
+
+
+ 
+
+Change RX
+{
+	string trash[20];
+	string mini[100];
+	integer in, out;
+	integer inIndex;
+	integer outIndex;
+
+
+	if (flagFB = 0)
+	{
+		flagFB = 1;
+              
+		While(find("\n",RX[1]))
+		{
+			mini = remove("\n",RX[1]);
+			if (left(mini,3) = "Out")
+			{
+            	out = atoi(remove(" ", Mini));
+				In = atoi(remove(" ", Mini));
+				if ((find("All",Mini))||(find("Vid",Mini))||(Find("RGB",Mini)))
+				{
+                	VideoFB[out] = in;
+					Control_Out[out] = in;
+					Debug[1] = ">>>>>>>>> Video in = "+itoa(in)+" Out = "+itoa(out);
+					
+					if (in>0)
+					{
+						Img_Is[Out] = ImgNum[in];
+						Text_Is[Out] = NameTxt[in];
+						//Debug[1] = ">>>>>>>>> Main Video FB";
+					}
+					Else
+					{
+						Img_Is[Out] = 0;
+						Text_Is[Out] = NameTxtOff;//"Выкл.";
+					    //Debug[1] = ">>>>>>>>> Text_Is[Out] = "+NameTxtOff;
+					}
+                     
+					CancelWait(UsbComparationWait);
+					StartUsbComparationWait();
+				}		
+			}
+				else
+				if (find("Password:",RX[1]))
+				{
+						tx[1] = Password[1]+"\n";	
+						Debug[1] = "><><><><><><><><><><>< ---- in ***";		
+				}
+				else
+				if (find("Administrator",RX[1]))
+				{
+					Debug[1] = "><><><><><><><><><><>< ---- in Administrator";
+  				  	Delay(1000);
+				   	GetInfo();				
+				}	
+				else
+				if (find("***",RX[1]))
+				{
+					tx[1] = Password[1]+"\n";
+					Debug[1] = "><><><><><><><><><><>< ---- in ***";			
+				}
+        	
+		}
+
+		if (find("Password:",RX[1]))
+		{
+        	RX[1] = "";
+			tx[1] = Password[1]+"\n";
+			Debug[1] = "><><><><><><><><><><>< ---- out Password";			
+		}
+		else
+		if (find("***",RX[1]))
+		{
+        	RX[1] = "";
+			tx[1] = Password[1]+"\n";
+			Debug[1] = "><><><><><><><><><><>< ---- out ***";			
+		}
+
+
+		//\x0D\x0A(c) Copyright 2013, Extron Electronics, FOX Matrix 320x, V3.02, 60-1082-01\x0D\x0ATue, 29 May 2018 09:41:46\x0D\x0A\x0D\x0APassword:
+		//********\x0D\x0ALogin Administrator\x0D\x0A
+
+		flagFB = 0;
+	}
+}
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+
+Function Main()
+{
+	Delay(100);
+    AutoUsb = 0;
+	EnableUsbConnection_fb = 0;
+}
+
+
