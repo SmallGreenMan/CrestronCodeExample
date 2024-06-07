@@ -38,4 +38,3 @@ The icon in the upper right corner of the video output button is intended for sw
  - If the video source does not have a USB output, this button will be hidden
 
 ![img_1.png](img/img_4.png)
-
