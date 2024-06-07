@@ -1,0 +1,755 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "AudioFromVideo"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+
+ DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,MicAuto,
+			   AudioAuto,_skip_,letsDoIt,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   mute_io_fb[35],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   mute_io_FB_Tresh[35],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   CP_FB[175],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   CP_FB_trash[175],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   AudioFromVideo_LetsDoIt[256],
+			   _skip_,
+			   trash[10],
+			   _skip_;			   
+ ANALOG_INPUT video_FB[256];
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,MicAuto_fb,
+			   AudioAuto_fb,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   mute_io_on[35],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   mute_io_off[35],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   CP_on[175],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   CP_off[175],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   AudioFromVideo_out[256],
+			   _skip_,
+			   ShowAudioControl[10],
+			   _skip_;
+ ANALOG_OUTPUT video_Control[256],_skip_;
+ STRING_OUTPUT ShowControl_text[10],_skip_,debug[1],_skip_,_skip_,_skip_,_skip_,
+			   NumFreeAudioChInZone[3];
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+ INTEGER_PARAMETER
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+ 
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+
+_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+CodecZoneId[4],
+_skip_,
+CodecVideoInNum[4],_skip_,_skip_,_skip_,_skip_,_skip_,
+ZoneId[256],_skip_,
+MicNumZone_1[5],_skip_,
+MicNumZone_2[5],_skip_,
+MicNumZone_3[5],_skip_,
+MicNumZone_11[5],_skip_,
+MicNumZone_12[5],_skip_,_skip_,_skip_,_skip_,_skip_,
+AudioChanelNum[15],_skip_,_skip_,_skip_,_skip_,_skip_;
+STRING_PARAMETER InputName[256][200];
+//_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,MicNumZone_1[5];
+
+
+
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+// STRING_PARAMETER
+
+/*******************************************************************************************
+  Structure Definitions
+*******************************************************************************************/
+/*
+STRUCTURE MyStruct1
+{
+};
+
+MyStruct1 struct;
+*/
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ Integer MicAutoFlag, AudioAutoFlag;
+ INTEGER FreeChanels_FB[10],ZoneFreeChanels[3],ZoneNumMicStart[5],ZoneNumMic[5],VcsInInNum[4],VideoInZone[12][25];
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+
+Integer_Function CheckRealConnectionFree(integer out, integer in, integer zone)
+{
+	integer i, i1, i2, cmd;
+
+	switch(zone)
+	{
+    	case (1):
+		{i1 = 1; i2 = 5;}
+		case (2):
+		{i1 = 6; i2 = 7;}
+		case (3):
+		{i1 = 8; i2 = 10;}
+	}
+       
+	cmd = 0;
+	i = i1;
+	While (i < i2+1)
+	{
+		if (video_FB[AudioChanelNum[i]] = in)
+		{
+			cmd = i + 100;
+			i = i2;	
+		}
+
+		i = i + 1;
+	}
+    if (cmd = 0)
+	{
+		i = i1;
+		While (i < i2+1)
+		{
+			if (video_FB[AudioChanelNum[i]] = 0)
+			{
+				cmd = i;
+				i = i2;	
+			}
+			i = i + 1;
+		}
+	}
+
+
+	return (cmd);
+}
+Integer_Function CheckRealConnectionYes(integer out, integer in, integer zone)
+{
+	integer i, i1, i2, cmd;
+
+	switch(zone)
+	{
+    	case (1):
+		{i1 = 1; i2 = 5;}
+		case (2):
+		{i1 = 6; i2 = 7;}
+		case (3):
+		{i1 = 8; i2 = 10;}
+	}
+       
+	cmd = 0;
+	i = i1;
+	While (i < i2+1)
+	{
+		if (video_FB[AudioChanelNum[i]] = in)
+		{
+			cmd = i + 10;
+			i = i2;	
+		}
+
+		i = i + 1;
+	}
+
+	return (cmd);
+}
+
+
+Function CheckVideoOut(integer out)
+{
+	integer zone;
+	integer cmd;
+     
+	zone = ZoneId[out];
+	if (zone>0)
+	{
+		cmd = CheckRealConnectionYes(out,video_FB[out],zone);
+		if (cmd>0)
+			AudioFromVideo_out[out] = 1;
+		else
+			AudioFromVideo_out[out] = 0;  
+    		
+	}
+}
+
+Function CheckFreeChanels()
+{
+	integer i, y, chengeFlag, CpId;
+	integer n, zone, ActiveFlag[10], AudioFromVideo_Flag[256];
+         
+	n = 0;
+	for(zone = 1 to 3)
+	{
+		y = 1;
+			While(VideoInZone[zone][y] > 0)
+			{
+				AudioFromVideo_Flag[VideoInZone[zone][y]] = 0;
+              	//AudioFromVideo_out[VideoInZone[zone][y]] = 0;  	
+				y = y + 1;
+			}
+	}
+	zone = 1;
+	for	(i = 1 to 5)
+		if (video_FB[AudioChanelNum[i]]=0)
+		{
+			n = n + 1;
+			ShowControl_text[i] = "";
+		}
+		else
+		{
+			ShowControl_text[i] =  InputName[video_FB[AudioChanelNum[i]]];
+			y = 1;
+			While(VideoInZone[zone][y] > 0)
+			{
+            	if (video_FB[AudioChanelNum[i]] = video_FB[VideoInZone[zone][y]])
+				{
+					ActiveFlag[i] = 1;
+					AudioFromVideo_Flag[VideoInZone[zone][y]] = 1;
+              		//AudioFromVideo_out[VideoInZone[zone][y]] = 1;  	
+				}
+				y = y + 1;
+			}
+		}
+
+	
+	debug[1] = ">>>> Zone 1 have " + itoa(n) + " free Chanels";
+	NumFreeAudioChInZone[1] = itoa(n);	
+	ZoneFreeChanels[1] = n;	
+
+	n = 0;
+	zone = 2;
+	for	(i = 6 to 7)
+		if (video_FB[AudioChanelNum[i]]=0)
+		{
+			n = n + 1;
+			ShowControl_text[i] = "";
+		}
+		else
+		{
+			ShowControl_text[i] =  InputName[video_FB[AudioChanelNum[i]]];
+			y = 1;
+			While(VideoInZone[zone][y] > 0)
+			{
+            	if (video_FB[AudioChanelNum[i]] = video_FB[VideoInZone[zone][y]])
+				{
+					ActiveFlag[i] = 1;
+					AudioFromVideo_Flag[VideoInZone[zone][y]] = 1;
+              		//AudioFromVideo_out[VideoInZone[zone][y]] = 1;   	
+				}
+				y = y + 1;
+			}
+		}
+
+	debug[1] = ">>>> Zone 2 have " + itoa(n) + " free Chanels";
+	NumFreeAudioChInZone[2] = itoa(n);
+	ZoneFreeChanels[2] = n;
+
+	n = 0;
+	zone = 3;
+	for	(i = 8 to 10)
+		if (video_FB[AudioChanelNum[i]]=0)
+		{
+			n = n + 1;
+			ShowControl_text[i] = "";
+
+		}
+		else
+		{
+			ShowControl_text[i] =  InputName[video_FB[AudioChanelNum[i]]];
+			y = 1;
+			While(VideoInZone[zone][y] > 0)
+			{
+				debug[1] = ">>>> Zone 3 have FbInDeembeder = " + itoa(video_FB[AudioChanelNum[i]]) + " out = "+itoa(VideoInZone[zone][y])+" FbInZoneOut = "+itoa(video_FB[VideoInZone[zone][y]]);
+            	if (video_FB[AudioChanelNum[i]] = video_FB[VideoInZone[zone][y]])
+				{
+					ActiveFlag[i] = 1;
+					AudioFromVideo_Flag[VideoInZone[zone][y]] = 1;
+              		//AudioFromVideo_out[VideoInZone[zone][y]] = 1;   	
+				}
+				y = y + 1;
+			}
+		}
+
+	debug[1] = ">>>> Zone 3 have " + itoa(n) + " free Chanels";
+	NumFreeAudioChInZone[3] = itoa(n);
+	ZoneFreeChanels[3] = n;
+
+      
+	for(zone = 1 to 3)
+	{
+		y = 1;
+			While(VideoInZone[zone][y] > 0)
+			{
+              	AudioFromVideo_out[VideoInZone[zone][y]] = AudioFromVideo_Flag[VideoInZone[zone][y]];  	
+				y = y + 1;
+			}
+	}
+
+	chengeFlag = 0;
+	for(i = 1 to 10)
+	{
+		if (ActiveFlag[i] = 0)
+		{
+			ShowAudioControl[i] = 0;
+	    	if (video_FB[AudioChanelNum[i]]>0)
+			{
+				switch(i)
+				{
+                	Case (1):
+					{
+						Zone = 1;
+					}
+                	Case (2):
+					{
+						Zone = 1;
+					}
+                	Case (3):
+					{
+						Zone = 1;
+					}
+                	Case (4):
+					{
+						Zone = 1;
+					}
+                	Case (5):
+					{
+						Zone = 1;
+					}
+              		Case (6):
+					{
+						Zone = 2;
+					}
+                	Case (7):
+					{
+						Zone = 2;
+					}
+                	Case (8):
+					{
+						Zone = 3;
+					}  
+                	Case (9):
+					{
+						Zone = 3;
+					}
+                	Case (10):
+					{
+						Zone = 3;
+					}
+
+				}
+
+				chengeFlag = 1;	
+	
+					video_Control[AudioChanelNum[i]] = 0;			// --- Раскомутация
+		 			
+					CpId = (zone - 1)* 25 + i + 11;
+	
+					ShowControl_text[i] = "";
+					CP_off[CpId] = 1;
+					delay(1);
+					CP_off[CpId] = 0;
+			}
+		}
+		else
+			ShowAudioControl[i] = 1;
+	}
+}
+    
+Function StartWait()
+{
+	Wait(110, WaitRechecAudio)
+	{
+    	CheckFreeChanels();
+	}		
+}
+  
+/*
+	// --- Колличество микрофонов в зоне
+	ZoneNumMic[1] = 0;
+	ZoneNumMic[2] = 3;
+	ZoneNumMic[3] = 4;
+	ZoneNumMic[4] = 3;
+	ZoneNumMic[5] = 2;
+
+	// --- Микрофоны в зоне начинаются с 
+	ZoneNumMicStart[1] = 0;
+	ZoneNumMicStart[2] = 5;
+	ZoneNumMicStart[3] = 8;
+	ZoneNumMicStart[4] = 3;
+	ZoneNumMicStart[5] = 1;
+*/ 
+Function ConectMicToVcs(integer zone, integer vcsN[])	// --- Коммутируем группу микрофонов в кодеки вкс
+{
+	integer i, y, CpId;
+	
+	if (ZoneNumMic[zone] > 0)
+	{
+       	for (i = 1 to 4)	// --- кодек
+		{
+			for (y = 1 to ZoneNumMic[zone]) // --- микрофоны
+			{
+				CpId = (i + 2)* 25 + ZoneNumMicStart[zone] + y - 1;
+            	if (vcsN[i] > 0)	// --- коммутируем или нет
+				{
+					CP_on[CpId] = 1;	
+					delay(1);
+					CP_on[CpId] = 0;
+					delay(1);
+				} 
+				else
+				{
+					CP_off[CpId] = 1;	
+					delay(1);
+					CP_off[CpId] = 0;
+					delay(1);
+				}   	
+			}  	
+		}  	
+	}	
+}
+     
+Function CheckMicToVSC()
+{
+	integer i, y,  i1, i2, vcsN[4], zone;
+       
+	for(zone = 1 to 5)
+	{	       
+		vcsN[1] = 0;
+		vcsN[2] = 0;
+		vcsN[3] = 0;
+		vcsN[4] = 0;
+		i = 1;
+		While (VideoInZone[zone][i]>0)
+		{
+			for (y = 1 to 4)
+			{
+				//VideoInZone
+				if (video_FB[VideoInZone[zone][i]] = VcsInInNum[y])
+				{
+					vcsN[y] = 1;
+					y = 5;	
+				}
+			}
+			i = i + 1;
+		}
+		ConectMicToVcs(zone, vcsN);
+	}
+}
+
+Function StartWaitMicToVSC()
+{
+	Wait(120, WaitRechecMicToVSC)
+	{
+    	CheckMicToVSC();
+	}		
+}
+
+
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+PUSH letsDoIt
+{
+	CheckFreeChanels();
+}
+
+Push MicAuto
+{
+	if (MicAutoFlag = 1)
+	{
+		MicAuto_fb = 0;
+        MicAutoFlag = 2;
+	}
+	else 
+	{
+		MicAuto_fb = 1;
+        MicAutoFlag = 1;
+
+		CancelWait(WaitRechecMicToVSC);
+		StartWaitMicToVSC();
+	}		
+}  
+Push AudioAuto
+{
+	if (AudioAutoFlag = 1)
+	{
+		AudioAuto_fb = 0;
+        AudioAutoFlag = 2;
+	}
+	else 
+	{
+		AudioAuto_fb = 1;
+        AudioAutoFlag = 1;
+
+		CancelWait(WaitRechecAudio);
+		StartWait();
+	}		
+}                      
+
+
+Push AudioFromVideo_LetsDoIt
+{
+	integer out;
+	integer zone;
+	integer CpId;
+	integer in;
+	integer FreeCh;
+	integer i;
+
+	out = GetLastModifiedArrayIndex ();
+	in = video_FB[out];   
+	zone = ZoneId[out];
+	debug[1] = ">>>> VideoOut is " + itoa(out) + " VideoIn Is "+ itoa(in)+" zone is " + itoa(zone);
+	if (zone>0)
+	{
+		debug[1] = ">>>> Start CheckRealConnection  " + itoa(FreeCh);
+		FreeCh = CheckRealConnectionFree(out,in,zone);	
+		debug[1] = ">>>> FreeCh is " + itoa(FreeCh);
+        
+		if (FreeCh > 0)							
+		{
+			if (FreeCh < 100)
+			{
+				video_Control[AudioChanelNum[FreeCh]] = in;			// --- Коммутация на свободный деэмбедер
+	 	
+				CpId = (zone - 1)* 25 + FreeCh + 11;
+				
+				ShowControl_text[FreeCh] = InputName[in];
+				CP_on[CpId] = 1;	
+				delay(5);
+				CP_on[CpId] = 0;		
+			}
+			else
+			{
+				FreeCh = FreeCh - 100;
+				video_Control[AudioChanelNum[FreeCh]] = 0;			// --- Раскомутация
+	 	
+				CpId = (zone - 1)* 25 + FreeCh + 11;
+
+				ShowControl_text[FreeCh] = "";
+				CP_off[CpId] = 1;
+				delay(5);
+				CP_off[CpId] = 0;
+			}
+                   
+			Delay(10);
+			//i = 1;
+			//While(VideoInZone[zone][i]>0)
+			//{
+           	//	CheckVideoOut(VideoInZone[zone][i]); 		
+			//	i = i + 1;
+			//}
+                     
+			if (AudioAutoFlag = 1)
+				CheckFreeChanels();	// --- Проверяем наличие свободных каналов и прописываем текст имена деимбедеров
+		}		
+	}
+}
+
+CHANGE video_FB
+{
+	integer but, zone, in, out, FreeCh, CpId;
+	but = GetLastModifiedArrayIndex();
+	//CheckVideoOut(but);
+                                 
+	if (AudioAutoFlag = 1)
+	{
+		CancelWait(WaitRechecAudio);
+		StartWait();
+			
+		if ((but = 39)||(but = 40))
+		{
+			switch(but)
+			{
+            	Case (39):
+				{
+					FreeCh = 6;
+				}
+            	Case (40):
+				{
+					FreeCh = 7;
+				}
+
+			}
+                   
+			zone = 2;
+			in = video_FB[but];
+        	if (in>0)
+			{
+				video_Control[AudioChanelNum[FreeCh]] = in;			// --- Коммутация на свободный деэмбедер
+	 	
+				CpId = (zone - 1)* 25 + FreeCh + 11;
+				
+				ShowControl_text[FreeCh] = InputName[in];
+				CP_on[CpId] = 1;	
+				delay(5);
+				CP_on[CpId] = 0;  	
+			}
+			Else
+			{
+				video_Control[AudioChanelNum[FreeCh]] = 0;			// --- Раскомутация
+	 	
+				CpId = (zone - 1)* 25 + FreeCh + 11;
+
+				ShowControl_text[FreeCh] = "";
+				CP_off[CpId] = 1;
+				delay(5);
+				CP_off[CpId] = 0;
+			}
+		}
+	}
+
+	if (MicAutoFlag = 1)
+	{
+		CancelWait(WaitRechecMicToVSC);
+		StartWaitMicToVSC();
+	}
+
+}
+ 
+
+
+
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+
+Function Main()
+{
+	integer zone;
+
+	if (MicAutoFlag = 1)
+		MicAutoFlag = 0;
+	if (AudioAutoFlag = 0)
+		AudioAutoFlag = 1;
+
+	if (MicAutoFlag = 1)
+		MicAuto_fb = 1;
+	else 
+		MicAuto_fb = 0;
+
+	if (AudioAutoFlag = 1)
+		AudioAuto_fb = 1;
+	else 
+		AudioAuto_fb = 0;
+	
+	zone = 1;
+	VideoInZone[zone][1] = 13;
+	VideoInZone[zone][2] = 14;
+	VideoInZone[zone][3] = 15;
+	VideoInZone[zone][4] = 16;
+	VideoInZone[zone][5] = 17;
+	VideoInZone[zone][6] = 18;
+	VideoInZone[zone][7] = 19;
+	VideoInZone[zone][8] = 20;
+	VideoInZone[zone][9] = 21;
+	VideoInZone[zone][10] = 22;
+	VideoInZone[zone][11] = 23;
+	VideoInZone[zone][12] = 24;
+	VideoInZone[zone][13] = 25;
+	VideoInZone[zone][14] = 26;
+	VideoInZone[zone][15] = 27;
+	VideoInZone[zone][16] = 28;
+	VideoInZone[zone][17] = 29;
+	VideoInZone[zone][18] = 30;
+	VideoInZone[zone][19] = 31;
+	VideoInZone[zone][20] = 32;
+
+	VideoInZone[zone][21] = 7;
+	VideoInZone[zone][22] = 8;
+	VideoInZone[zone][23] = 9;
+
+	zone = 2;
+	VideoInZone[zone][1] = 39;
+	VideoInZone[zone][2] = 40;
+
+	zone = 3;
+	VideoInZone[zone][1] = 146;
+	VideoInZone[zone][2] = 145;
+	VideoInZone[zone][3] = 148;
+	VideoInZone[zone][4] = 147;
+	VideoInZone[zone][5] = 150;
+	VideoInZone[zone][6] = 149;
+	VideoInZone[zone][7] = 152;
+	VideoInZone[zone][8] = 151;
+	VideoInZone[zone][9] = 162;
+	VideoInZone[zone][10] = 161;
+	VideoInZone[zone][11] = 164;
+	VideoInZone[zone][12] = 163;
+	VideoInZone[zone][13] = 166;
+	VideoInZone[zone][14] = 165;
+	VideoInZone[zone][15] = 252;
+	VideoInZone[zone][16] = 136;
+	VideoInZone[zone][17] = 168;
+	VideoInZone[zone][18] = 167;
+	VideoInZone[zone][19] = 170;
+	VideoInZone[zone][20] = 169;
+              
+	zone = 4;
+	VideoInZone[zone][1] = 34;
+	VideoInZone[zone][2] = 35;
+	VideoInZone[zone][3] = 36;
+
+	zone = 5;
+	VideoInZone[zone][1] = 3;
+	VideoInZone[zone][2] = 5;
+
+
+    // --- Видео входа ВКС
+    VcsInInNum[1] = 112;
+	VcsInInNum[2] = 114;
+	VcsInInNum[3] = 119;
+	VcsInInNum[4] = 124;
+       
+
+	// --- Колличество микрофонов в зоне
+	ZoneNumMic[1] = 0;
+	ZoneNumMic[2] = 3;
+	ZoneNumMic[3] = 4;
+	ZoneNumMic[4] = 2;
+	ZoneNumMic[5] = 2;
+
+	// --- Микрофоны в зоне начинаются с 
+	ZoneNumMicStart[1] = 0;
+	ZoneNumMicStart[2] = 5;
+	ZoneNumMicStart[3] = 8;
+	ZoneNumMicStart[4] = 3;
+	ZoneNumMicStart[5] = 1;
+}

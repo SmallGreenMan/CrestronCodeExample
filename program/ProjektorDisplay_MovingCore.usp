@@ -1,0 +1,165 @@
+// #ENABLE_DYNAMIC
+#SYMBOL_NAME "ProjektorDisplay_MovingCore"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+// #ENCODING_ASCII
+// #ENCODING_UTF16
+// #ENCODING_INHERIT_FROM_PARENT
+// #ENCODING_INHERIT_FROM_PROGRAM
+
+
+ DIGITAL_INPUT up, down;
+// ANALOG_INPUT 
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT up_fb, down_fb;
+// ANALOG_OUTPUT 
+// STRING_OUTPUT 
+
+/*******************************************************************************************
+  Parameters
+  (Uncomment and declare parameters as needed)
+*******************************************************************************************/
+ INTEGER_PARAMETER _skip_,_skip_,timeDelay;
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+// STRING_PARAMETER
+
+/*******************************************************************************************
+  Global Variables
+  (Uncomment and declare global variables as needed)
+  Note:  Be sure to initialize all declared STRING variables as needed
+         For example, in Function Main: myString = "";
+*******************************************************************************************/
+ INTEGER zapret;
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+
+PUSH up
+{
+    if (zapret=0)
+	{
+    	zapret = 1;
+		down_fb = 0;
+		Delay(40);
+		up_fb = 1;
+
+		Delay(timeDelay);
+		up_fb = 0;
+		zapret = 0;
+	}
+	else
+	{
+    	zapret = 0;
+		down_fb = 0;
+		up_fb = 0;
+	}
+}
+
+
+PUSH down
+{
+    if (zapret=0)
+	{
+    	zapret = 1;
+		up_fb = 0;
+		Delay(40);
+		down_fb = 1;
+
+		Delay(timeDelay);
+		down_fb = 0;
+		zapret = 0;
+	}
+	else
+	{
+    	zapret = 0;
+		down_fb = 0;
+		up_fb = 0;
+	}
+
+}
+
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

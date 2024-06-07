@@ -1,0 +1,432 @@
+// #ENABLE_DYNAMIC
+#SYMBOL_NAME "QSYS_VAV_v01"
+// #HINT ""
+ #DEFINE_CONSTANT MaxMute 35
+ #DEFINE_CONSTANT MaxCrospoints 175 
+ #DEFINE_CONSTANT MaxOut 7
+ #DEFINE_CONSTANT MaxIn 25
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   HertBeat,_Skip_,Pull,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Mute[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Mute_on[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Mute_off[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Up[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Down[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Cp[MaxCrospoints],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Cp_on[MaxCrospoints],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Cp_off[MaxCrospoints],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_;
+ ANALOG_INPUT  _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   level[MaxMute],
+			   _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_;
+// STRING_INPUT 
+ BUFFER_INPUT  rx[1][65343], txtControl[1][254];
+
+ DIGITAL_OUTPUT  _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Mute_fb[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Mute_on_fb[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Mute_off_fb[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Up_fb[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Down_fb[MaxMute],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Cp_fb[MaxCrospoints],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Cp_on_fb[MaxCrospoints],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Cp_off_fb[MaxCrospoints],_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_;
+ ANALOG_OUTPUT  _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   level_fb[MaxMute],
+			   _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_;
+
+// ANALOG_OUTPUT 
+ STRING_OUTPUT tx[1], debug[1], _Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,_Skip_,
+			   Level_text[MaxMute];
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+ INTEGER_PARAMETER MaxVol, MinVol;
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+// STRING_PARAMETER
+
+/*******************************************************************************************
+  Structure Definitions
+*******************************************************************************************/
+/*
+STRUCTURE MyStruct1
+{
+};
+
+MyStruct1 struct;
+*/
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER but, i, holdFlag, lev2;
+ INTEGER MuteIs[MaxMute], LevelIs[MaxMute], CpIs[MaxCrospoints]; 
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+/*
+Function MyFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+Push HertBeat
+{
+	tx[1] = "sg\n";
+}
+Push Pull
+{
+	integer i,y,num;
+
+	//i = 1;
+	for(i = 1 to MaxMute)
+	{
+		tx[1] = "cg GainMute_"+itoa(i)+"\n";
+		Delay(2);
+		tx[1] = "cg GainGain_"+itoa(i)+"\n";
+        Delay(2);
+	}
+	for(i = 1 to MaxIn)
+	{
+		For(y = 1 to MaxOut)
+		{
+        	tx[1] = "cg Mixer25x7Input"+itoa(i)+"Output"+itoa(y)+"Gain\n";
+			Delay(2);	
+		}
+	}
+}
+PUSH Mute
+{
+    integer but;
+	string mut[1];
+	but = GetLastModifiedArrayIndex ();
+
+	if (MuteIs[but] = 1)
+		mut = "0";
+	else
+		mut = "1";
+
+	tx[1] = "csv GainMute_"+itoa(but)+" "+mut+"\n";
+}
+
+Push Cp
+{
+    integer but, in, out;
+	string dat[5];
+	but = GetLastModifiedArrayIndex ();
+
+	if (CpIs[but] = 0)
+		dat = "0";
+	else
+		dat = "-100";
+
+	out = (but-1)/MaxIn + 1;
+	in = but%(MaxIn);
+	if (in = 0)
+		in = MaxIn;
+	
+	debug[1] = ">>>>>>>>>>>>>>>> in = "+itoa(in)+" out = "+itoa(out);
+	//Mixer25x7Input1Output2Gain
+	tx[1] = "csv Mixer25x7Input"+itoa(in)+"Output"+itoa(out)+"Gain "+dat+"\n";		
+}
+
+Push Cp_on
+{
+    integer but, in, out;
+	string dat[5];
+	but = GetLastModifiedArrayIndex ();
+
+	dat = "0";
+
+	out = (but-1)/MaxIn + 1;
+	in = but%(MaxIn);
+	if (in = 0)
+		in = MaxIn;
+	
+	debug[1] = ">>>>>>>>>>>>>>>> in = "+itoa(in)+" out = "+itoa(out);
+	//Mixer25x7Input1Output2Gain
+	tx[1] = "csv Mixer25x7Input"+itoa(in)+"Output"+itoa(out)+"Gain "+dat+"\n";
+}
+
+Push Cp_off
+{
+    integer but, in, out;
+	string dat[5];
+	but = GetLastModifiedArrayIndex ();
+
+	dat = "-100";
+
+	out = (but-1)/MaxIn + 1;
+	in = but%(MaxIn);
+	if (in = 0)
+		in = MaxIn;
+	
+	debug[1] = ">>>>>>>>>>>>>>>> in = "+itoa(in)+" out = "+itoa(out);
+	//Mixer25x7Input1Output2Gain
+	tx[1] = "csv Mixer25x7Input"+itoa(in)+"Output"+itoa(out)+"Gain "+dat+"\n";
+}
+
+
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+ 
+
+//cv "GainMute_1" "muted" 1 1\x0D\x0A
+Push Up
+{
+	integer but;
+	integer lev1;
+	string dat[5];
+	string data[7];
+
+	but = GetLastModifiedArrayIndex ();
+	
+	holdFlag = 1;
+	While(holdFlag = 1)
+	{
+
+    	lev2 = LevelIs[but];
+    	if (lev2 <= MaxVol-10)
+		{
+     		lev2 = lev2 + 10; 
+			Data = ""; 
+			debug[1] = ">>>>>>>>>>>>> Up Lev = "+itoa(lev2)+ " but = "+itoa(but)+" LevelIs[but] = "+itoa(LevelIs[but]);
+			if (lev2 < 10000)
+			{
+				lev1 = 10000 - lev2;
+				//dat = "0"+itoa(lev%100);
+				Data = "-";
+			}
+			else
+			{
+				lev1 = lev2 - 10000;
+				//dat = "0"+itoa(lev%100);
+		        //Data = itoa((lev - 10000)/100)+"."+right(dat,2);
+			}
+		
+				dat = "0"+itoa(lev1%100);
+		        Data = Data + itoa(lev1/100)+"."+right(dat,2);
+				
+			tx[1] = "csv GainGain_"+itoa(but)+" "+Data+"\n";
+		}
+		delay(25);
+	}
+}
+Push Down
+{
+	integer but;
+	integer lev1;
+	string dat[5];
+	string data[7];
+
+	but = GetLastModifiedArrayIndex ();	
+	holdFlag = 1;
+	While(holdFlag = 1)
+	{
+		lev2 = LevelIs[but];
+		Data = "";
+    	if (lev2 >= MinVol+10)
+		{
+     		lev2 = lev2 - 10;  
+			debug[1] = ">>>>>>>>>>>>> Down Lev = "+itoa(lev2)+ " but = "+itoa(but)+" LevelIs[but] = "+itoa(LevelIs[but]);
+			if (lev2 < 10000)
+			{
+				lev1 = 10000 - lev2;
+				//dat = "0"+itoa(lev%100);
+				Data = "-";
+			}
+			else
+			{
+				lev1 = lev2 - 10000;
+				//dat = "0"+itoa(lev%100);
+		        //Data = itoa((lev - 10000)/100)+"."+right(dat,2);
+			}
+		
+				dat = "0"+itoa(lev1%100);
+		        Data = Data + itoa(lev1/100)+"."+right(dat,2);
+				
+			tx[1] = "csv GainGain_"+itoa(but)+" "+Data+"\n";
+ 	
+		}
+		delay(25);
+	}
+}
+
+
+RELEASE Up, Down
+{
+	holdFlag = 0;	
+}
+
+Change level
+{
+	integer but;
+	integer lev;
+	string dat[5];
+	string data[7];
+
+	holdFlag = 0;	
+
+
+	but = GetLastModifiedArrayIndex ();
+    lev = (level[but]/10)*10;
+
+		if (lev < 10000)
+		{
+			lev = 10000 - lev;
+			//dat = "0"+itoa(lev%100);
+			Data = "-";
+		}
+		else
+		{
+			lev = lev - 10000;
+			//dat = "0"+itoa(lev%100);
+	        //Data = itoa((lev - 10000)/100)+"."+right(dat,2);
+		}
+	
+			dat = "0"+itoa(lev%100);
+	        Data = Data + itoa(lev/100)+"."+right(dat,2);
+			
+		tx[1] = "csv GainGain_"+itoa(but)+" "+Data+"\n";
+
+}
+
+CHANGE rx
+{
+    string mini[254];
+	string header[3];
+	string trash[100];
+	string levTxt[10];
+	integer n, l;
+	integer num;
+	integer mut;
+	integer lev;
+	integer in, out;
+	
+	while(find("\n", rx[1]))
+	{
+		mini = remove("\n", rx[1]);
+		
+		header = remove(" ", mini);
+                       
+		// cv "GainGain_1" "0dB" 0 0.833333\x0D\x0A
+		if (header = "cv ")
+		{
+			if (find("GainMute_", mini))
+			{
+				trash = remove("GainMute_", mini);
+				num = atoi(remove(" ", mini));
+				trash = remove(" ", mini);	
+				mut = atoi(remove(" ", mini));	
+	
+				MuteIs[num] = mut;
+				Mute_FB[num] = mut;	
+			}
+			Else if (find("Mixer25x7", mini))	// cv "Mixer25x7Input1Output1Gain" "-100dB" -100 0\x0D\x0A
+			{
+				trash = remove("Input", mini);
+				in = atoi(remove("Output", mini));
+				Out = atoi(remove("Gain", mini));
+				trash = remove(" ", mini);
+				trash = remove(" ", mini);
+				trash = remove(" ", mini);
+				
+				num = (Out-1)*MaxIn + in;
+
+				if (trash = "-100 ")
+					lev = 0;
+				else
+					lev = 1;
+	
+				CpIs[num] = lev;
+				Cp_fb[num] = lev;
+				debug[1] = ">>>>>>>>>>>>>>>> num = "+itoa(num)+" MuteCP = "+itoa(lev);					
+			}
+			else if (find("GainGain_", mini))	//cv "GainGain_1" "10.1dB" 10.05 0.917083\x0D\x0A
+			{
+				trash = remove("GainMute_", mini);
+				num = atoi(remove(" ", mini));
+				trash = remove(" ", mini);
+				trash = remove(" ", mini);
+                         
+                Level_text[num] = trash;
+				
+				if (find(".",trash))
+				{
+					n = find(".",trash);
+					l = len(trash);
+					levTxt = mid(trash,1,n-1)+mid(trash,n+1,1);	
+					//if (l = n+1)
+						levTxt = levTxt + "0";			
+				}
+				else
+				{
+					l =	len(trash);
+					levTxt = mid(trash,1,l-1) + "00";
+					//levTxt = trash;
+				}
+
+                if (find("-",levTxt))
+				{
+                	lev = (10000-atoi(levTxt));
+				}
+				else
+				{
+                	lev = (atoi(levTxt)+10000);
+				}
+				
+				debug[1] = levTxt;
+				LevelIs[num] = lev;
+				level_fb[num] = lev;	
+			}
+		}
+	}
+}
+
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+*******************************************************************************************/
+
+Function Main()
+{
+
+}

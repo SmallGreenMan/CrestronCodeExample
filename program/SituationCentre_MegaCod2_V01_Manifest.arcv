@@ -1,0 +1,127 @@
+[BEGIN]
+  ObjTp=FSgntr
+  Sgntr=ArchiveManifest
+  RelVrs=4.1700.03
+  IsProgram=1
+  TopLevelProgram=SituationCentre_MegaCod2_V01.smw
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=SituationCentre_MegaCod2_V01.smw
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=Eltex Eltex.ir
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=OpenBox.ir
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=Extron_VideoMatrix_256.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=VideoCom_TP_Core.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=VideoPressets.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=PP_SberMegaCOD.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=MegaCod_DGE100_v09.sgd_
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=Serial_Inicialize.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=ASCIItoUTF16cyr.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=QSYS_VAV_v01.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=DialNumForAvaya.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=Visca_Camera_GroupControl.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=VideoCom_Core_WS.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=PJLINK v1.0.umc
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=PJLINK.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=ProjektorDisplay_MovingCore.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=AudioFromVideo.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=NecPaneControlProtocol.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=GroupMute.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=SelectWsPcFormainPanel.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=TempText.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=MultiNot.ush
+  Scope=1
+[END]
+[BEGIN]
+  ObjTp=ArchiveItem
+  File=Password_enter.ush
+  Scope=1
+[END]

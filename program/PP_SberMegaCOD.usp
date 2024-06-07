@@ -1,0 +1,223 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "PP_SberMegaCOD"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   In[100],
+			   _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+			   VideoWall_in[10];
+// ANALOG_INPUT 
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				Out[100],
+				_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				VideoWall_fb[10];
+// ANALOG_OUTPUT 
+ STRING_OUTPUT _skip_,_skip_,Debug[1];
+
+/*******************************************************************************************
+  Parameters
+  (Uncomment and declare parameters as needed)
+*******************************************************************************************/
+// INTEGER_PARAMETER
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+// STRING_PARAMETER
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER pp_layer_1, VideoWall, pp_Layer_2[10];
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+
+Function PP_to_Null(Integer Leyer)
+{
+	integer i;
+
+	for(i = (1+Leyer*10) to (10+Leyer*10))
+	{
+		Out[i] = 0;
+	}	
+}
+
+Function VW_to_Null ()
+{
+	integer i;
+
+		for(i = 1 to 10)
+			VideoWall_fb[i] = 0;
+}
+
+
+/*******************************************************************************************
+  Event Handlers
+  (Uncomment and declare additional event handlers as needed)
+*******************************************************************************************/
+
+PUSH In
+{
+    integer but;
+	Integer pp_l_1,PP_l_2;
+
+	but = GetLastModifiedArrayIndex ();
+
+	if (but < 10)
+	{
+		pp_l_1 = but;
+		pp_layer_1 = but;
+                      
+		VW_to_Null ();   
+		PP_to_Null(0);
+		PP_to_Null(1);
+		PP_to_Null(2);
+		PP_to_Null(3);
+		PP_to_Null(4);
+		PP_to_Null(5);
+		PP_to_Null(6);
+
+
+		Out[pp_l_1] = 1;
+		if (pp_Layer_2[pp_l_1] > 0)
+		{
+			pp_l_2 = pp_l_1*10 + pp_Layer_2[pp_l_1];
+			Out[pp_l_2] = 1;
+			
+	        if (pp_l_1 = 1)
+			{
+				VW_to_Null (); 
+				if (pp_l_2 = 11)
+					if (VideoWall > 0)
+						VideoWall_fb[VideoWall] = 1;
+			}
+
+		}
+
+		Debug[1] = ">>>>>>>>>>>>>>> pp_l_1 = "+itoa(pp_l_1)+ " pp_l_2 = "+itoa(pp_l_2)+" VideoWall = "+itoa(VideoWall);		
+	}
+	Else if (but > 10)
+	{
+    	pp_l_1 = but/10;
+		PP_to_Null(pp_l_1);
+		pp_l_2 = but;
+
+		pp_Layer_2[pp_l_1] = but%10;
+
+		Out[pp_l_2] = 1;
+
+        if (pp_l_1 = 1)
+		{
+			VW_to_Null (); 
+			if (pp_l_2 = 11)
+				if (VideoWall > 0)
+					VideoWall_fb[VideoWall] = 1;
+		}
+
+		Debug[1] = ">>>>>>>>>>>>>>> pp_l_1 = "+itoa(pp_l_1)+ " pp_l_2 = "+itoa(pp_l_2)+" VideoWall = "+itoa(VideoWall);
+	}	
+}
+
+Push VideoWall_in
+{
+    integer but;
+
+	but = GetLastModifiedArrayIndex ();
+               
+	VideoWall = but;
+	VW_to_Null ();
+	VideoWall_fb[VideoWall] = 1;
+}
+
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+
+Function Main()
+{
+    pp_Layer_2[1] = 1;
+    pp_Layer_2[2] = 1;
+    pp_Layer_2[3] = 1;
+    pp_Layer_2[4] = 1;
+    pp_Layer_2[5] = 1;
+    pp_Layer_2[6] = 1;
+    pp_Layer_2[7] = 1;
+    pp_Layer_2[8] = 1;
+    pp_Layer_2[9] = 1;
+    pp_Layer_2[0] = 1;
+}

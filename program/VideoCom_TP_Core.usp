@@ -1,0 +1,221 @@
+// #ENABLE_DYNAMIC
+ #SYMBOL_NAME "VideoCom_TP_Core"
+// #HINT ""
+ #DEFINE_CONSTANT MaxIn 256
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT VideoInPP[10],
+			  _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,InOff[1],
+				 in[MaxIn],_skip_,out[MaxIn], _skip_, Close_PP_Video_In[1],_skip_,NoutSoundBtn[4];
+ ANALOG_INPUT  AnalogVideoIn,_skip_,_skip_, NoutSound_MatrixFB;
+// STRING_INPUT 
+// BUFFER_INPUT 
+
+ DIGITAL_OUTPUT VideoInPP_fb[10],
+			  _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,
+				pp_Video_In[1], _skip_,NoutSoundBtn_fb[4] , _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_;
+ ANALOG_OUTPUT  Chenge_Video[MaxIn];
+// STRING_OUTPUT 
+/*******************************************************************************************
+  Parameters
+  (Uncomment and declare parameters as needed)
+*******************************************************************************************/
+// INTEGER_PARAMETER
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+// STRING_PARAMETER
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER OutPut;
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+// STRING
+
+/*******************************************************************************************
+  Functions
+
+*******************************************************************************************/
+
+Function CloseInPP()
+{
+    integer i;
+	For(i = 1 to 10)
+	{
+	   	VideoInPP_fb[i] = 0;
+	}
+}
+
+/*******************************************************************************************
+  Event Handlers
+  (Uncomment and declare additional event handlers as needed)
+*******************************************************************************************/
+       
+Push VideoInPP
+{
+	integer but;
+	integer i;
+	but = GetLastModifiedArrayIndex();
+
+		if (VideoInPP_fb[but] = 0)
+		{
+			VideoInPP_fb[but] = 1;
+		}
+		else
+		{
+         	VideoInPP_fb[but] = 0;
+		}
+}
+PUSH out
+{
+	OutPut = GetLastModifiedArrayIndex();
+	pp_Video_In[1] = 1;
+}
+PUSH in
+{
+	integer but;
+	
+	but = GetLastModifiedArrayIndex();
+	
+	pp_Video_In[1] = 0;
+	CloseInPP();
+
+//	if		((but=3)&&(OutPut=17)){}
+//	else if	((but=19)&&(OutPut=26)){}
+//	else if	((but=1 || but=2)&&(OutPut=15 || OutPut=16)){}
+//	else if	((but=31 || but=32)&&(OutPut=1 || OutPut=2)){}	
+//	else 	{Chenge_Video[OutPut] = but;}
+	Chenge_Video[OutPut] = but;
+}
+
+Change AnalogVideoIn
+{
+	integer but;
+	
+	but = AnalogVideoIn;
+	
+	pp_Video_In[1] = 0;
+	CloseInPP();
+
+	Chenge_Video[OutPut] = but;
+}
+
+Push InOff
+{
+	pp_Video_In[1] = 0;
+	CloseInPP();
+
+	Chenge_Video[OutPut] = 0;
+}
+push Close_PP_Video_In
+{
+	pp_Video_In[1] = 0;
+}
+
+Push NoutSoundBtn
+{
+	integer nout;
+
+	nout = GetLastModifiedArrayIndex();
+    
+	//nout = nout + 19; //входы на матрице 20-23
+	//Chenge_Video[3] = nout; //Третий выход на матрице - выход деэмбэдера
+
+}
+    
+/*
+CHANGE NoutSound_MatrixFB
+{
+	INTEGER i;
+	
+    FoR(i=1 to 4) {NoutSoundBtn_fb[i] = 0;}	
+
+ 	if (NoutSound_MatrixFB>=20 && NoutSound_MatrixFB<=23)
+		{
+            NoutSoundBtn_fb[NoutSound_MatrixFB-19] = 1;		 	
+		}
+}
+*/
+
+/*
+RELEASE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+/*
+Function Main()
+{
+    // TODO:  Add code here
+    // Initialize declared global and local variables/arrays as needed.
+
+    // WaitForInitializationComplete();
+    // If you are reading any Input or Output variables, uncomment
+    //   the WaitForInitializationComplete statement above and read
+    //   them afterwards.  Input/Output variables will not have
+    //   their correct values set until after the logic processor
+    //   runs and propagates the values to them.
+}
+*/
+

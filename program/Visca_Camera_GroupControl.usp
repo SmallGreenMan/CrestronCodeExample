@@ -1,0 +1,530 @@
+// #ENABLE_DYNAMIC
+#SYMBOL_NAME "Visca_Camera_GroupControl"
+// #HINT ""
+// #DEFINE_CONSTANT
+// #CATEGORY "" 
+// #PRINT_TO_TRACE
+// #DIGITAL_EXPAND 
+// #ANALOG_SERIAL_EXPAND 
+// #OUTPUT_SHIFT 
+// #HELP_PDF_FILE ""
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+ DIGITAL_INPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,UpKey,DownKey,LeftKey,RightKey,ZoomUp,ZoomDown,
+			   _skip_,select_cam[5],_skip_,Inicializate[1],_skip_,Presset[50],_skip_,Joystic_press[1],_skip_;
+ ANALOG_INPUT JoysticX,JoysticY;
+// STRING_INPUT 
+ BUFFER_INPUT rx[1024];
+
+
+ DIGITAL_OUTPUT _skip_,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,SaveOk,_skip_,_skip_,_skip_,_skip_,_skip_,_skip_,selected_cam[5],_skip_,_skip_,_skip_;
+ //ANALOG_OUTPUT 
+ STRING_OUTPUT tx[5];
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+ INTEGER_PARAMETER Independet, JoyscticSpeed;//,CamAdress[5]; // Independet - 1, in_one = 0;
+// SIGNED_INTEGER_PARAMETER
+// LONG_INTEGER_PARAMETER
+// SIGNED_LONG_INTEGER_PARAMETER
+ STRING_PARAMETER CamAdress[5][1];//, STRING_PARAMETER File_Name[1][30];
+ STRING_PARAMETER BtnSpeed[1][1];
+
+
+
+STRUCTURE MyStruct1
+{
+	integer cam;
+	string ptz[8];
+	string zoom[4];
+};
+
+Nonvolatile MyStruct1 presserData[50];
+
+//8x 01 06 02 VV WW 0Y 0Y 0Y 0Y 0Z 0Z 0Z 0Z FF			- v,w speed y,z - ptz
+//8x 09 06 12 FF		- inqry							- Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF	 	- WWWWzzzz: pan
+
+
+// zoom
+// 8x 01 04 47 0Z 0Z 0Z 0Z FF
+// 8x 09 04 47 FF 										- Y0 50 0Z 0Z 0Z 0Z FF 					- ZZZZ: position
+
+// 90 50 0z 0z 0z 0z ff		- 1я
+// A0 50 0z 0z 0z 0z ff		- 2я 
+// b0 50 01 00 0f 0e ff		- 3я камера
+		
+
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+ INTEGER hold_flag,i,x,y,activeCam,but,xVector,yVector,xVectorContr,yVectorContr,xJSpeed,yJSpeed,JSpeedDelta, activePresset;
+ Nonvolatile integer CamPresset[50];
+// LONG_INTEGER
+// SIGNED_INTEGER
+// SIGNED_LONG_INTEGER
+ STRING xWay[1],yWay[1],trash[100];
+ string out_str[65533];
+ string mini[30], micro[20];
+
+
+/*******************************************************************************************
+  Functions
+  (Add any additional functions here)
+  Note:  Functions must be physically placed before the location in
+         the code that calls them.
+*******************************************************************************************/
+ /*               
+Function Data_to_Files(STRING sBuf, string fileName)		// --- Запись в Файл
+{
+	SIGNED_INTEGER  nFileHandle;
+	string name_f[50];	
+	
+	StartFileOperations();	
+	    //sBuf = "Hello World!";	
+		IF ( CheckForNVRAMDisk() = 1 )
+		{
+			name_f = "\\NVRAM\\"+fileName;
+		    nFileHandle = FileOpen ( name_f, _O_WRONLY);//_O_WRONLY );	
+		    IF (nFileHandle >= 0)	
+		    {	
+		      if( FileWrite(nFileHandle, sBuf, len(sBuf)) > 0 )	
+		        PRINT ("Written to file OK\n");	
+		      IF ( FileClose ( nFileHandle ) <> 0 )	
+		        PRINT ( "Error closing file\n" );	
+		    }
+			out_txt = "Write File = " + itoa(nFileHandle);				
+		}
+		Else
+			PRINT ("Disc Error\n");
+	EndFileOperations();
+}
+  
+Function File_to_Data(string fileName)		// --- Чтение из файла
+{
+    SIGNED_INTEGER  nFileHandle;
+    string name_f[50];
+	STRING sBuf[65534];
+	
+	StartFileOperations();
+		name_f = "\\NVRAM\\"+fileName;//"\\NVRAM\\"+fileName;
+	    nFileHandle = FileOpen ( name_f, _O_TEXT);//_O_RDONLY );//_O_TEXT);//_O_RDONLY );
+	    IF (nFileHandle >= 0)
+	    {
+			debug[1] = "IN read file";
+			out_txt = "IN read file";
+	      WHILE (FileRead(nFileHandle, sBuf, 65534) > 0)
+			{	out_str = sBuf;}//out_txt = sBuf;}
+	      IF ( FileClose ( nFileHandle ) <> 0 )
+	        PRINT ( "Error closing file\n" );
+	    }
+		else
+		{ out_txt = "Eror Open File = "+itoa(nFileHandle);}
+		debug[1] = "OUT read file";
+		out_txt = "OUT read file";
+	EndFileOperations();
+}
+
+
+
+
+Function FB_to_Data ()						// --- Из файла в память контроллреа
+{
+	string mini[200];
+	string musor[100];
+	integer Flag_Out;
+	integer i;
+           
+	out_txt = "Start FB_TO_Data";
+
+	DataNum = 0;
+	DataNumFav = 0;
+	Flag_Out=0;
+    while(len(out_str))
+	{
+		trace("%S i=%d",itoa(len(out_str)),i);
+		out_txt = "start in While in FB_TO_Data";
+		if (find("\x0D\x0A", out_str))
+     	{
+			mini = remove("\x0D\x0A", out_str);
+			if (find("---",mini))
+			{
+				if (find("Favorites",mini))
+					Flag_Out = 1;
+				else
+				if (find("END FILE",mini))
+					out_str = "";
+			}
+			Else
+			{
+				if (Flag_Out=0)
+				{
+		         	DataNum = DataNum + 1;
+					Data[DataNum].NameCH = mid(mini,1,(find("::",mini)-1));
+					musor = remove("::", mini);
+					Data[DataNum].CH = atoi(mini);
+				}
+				Else
+				{
+					DataNumFav = DataNumFav+1;
+					Fav[DataNumFav].NameCH = mid(mini,1,(find("::",mini)-1));
+					musor = remove("::", mini);
+					Fav[DataNumFav].CH = atoi(mini);
+				}		
+			}
+		}
+		else
+		{
+			out_str = "";
+		}
+	}
+
+trace("%s",itoa(len(out_str)));
+trace("out off While in FB_TO_Data");
+
+	out_txt = "out off While in FB_TO_Data";
+
+	// --- Расчет максимально возможное колличество позиций для расечта длинны слайда
+	DataNum_for_slide = DataNum/KolVo_CH_In_Page;
+	out_txt = "1 in FB_TO_Data";
+	if (DataNum%KolVo_CH_In_Page)
+	{
+		out_txt = "2 in FB_TO_Data";
+        DataNum_for_slide = (DataNum_for_slide + 1)*KolVo_CH_In_Page;
+	}
+	Else
+	{
+		out_txt = "3 in FB_TO_Data";
+		DataNum_for_slide = (DataNum_for_slide)*KolVo_CH_In_Page;
+	} 
+	out_txt = "4 in FB_TO_Data";
+
+	//debug[1] = "maximalnoe kolichestvo slaidov DataNum_for_slide=" + itoa(DataNum_for_slide);    
+	out_txt = "Stop FB_TO_Data";
+    out_txt = "maximalnoe kolichestvo slaidov DataNum_for_slide=" + itoa(DataNum_for_slide);  
+}
+
+Function Data_to_FB ()						// --- Из памяти контроллреа в файл
+{
+	integer i;
+     
+	out_str = "";
+	for(i=1 to DataNum)
+     	out_str = out_str + Data[i].NameCH + "::" + itoa(Data[i].CH) + "\n";
+	out_str = out_str + "---Favorites---\n";
+	for(i=1 to DataNumFav)
+     	out_str = out_str + Fav[i].NameCH + "::" + itoa(Fav[i].CH) + "\n";
+	out_str = out_str + "---END FILE---\n";
+	Data_to_Files(out_str,File_Name); 	
+}
+
+                 */
+
+
+
+Function SelectCamFunc(integer i)
+{
+	selected_cam[1] = 0;
+	selected_cam[2] = 0;
+	selected_cam[3] = 0;
+
+	selected_cam[i] = 1;}
+
+   
+
+Function CamGo ()
+{
+ 	wait(10,CamGoWait)
+	{
+     	makestring(tx[activeCam],"%s\x01\x06\x01%c%c%s%s\xff",CamAdress[activeCam],xJSpeed,yJSpeed,xWay,yWay);
+	}
+}
+/*
+Integer_Function MyIntFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+
+    Return (0);
+}
+*/
+
+/*
+String_Function MyStrFunction1()
+{
+    // TODO:  Add local variable declarations here
+
+    // TODO:  Add code here
+
+    Return ("");
+}
+*/
+
+/*******************************************************************************************
+  Event Handlers
+  (Uncomment and declare additional event handlers as needed)
+*******************************************************************************************/
+PUSH Inicializate
+{
+	tx[1] = "\x88\x30\x01\xff";
+	tx[2] = "\x88\x30\x01\xff";
+	tx[3] = "\x88\x30\x01\xff";
+}     
+
+PUSH select_cam
+{
+    activeCam = GetLastModifiedArrayIndex();
+
+	SelectCamFunc(activeCam);
+}
+
+PUSH UpKey
+{
+
+ 	tx[activeCam] = CamAdress[activeCam]+"\x01\x06\x01"+BtnSpeed[1]+BtnSpeed[1]+"\x03\x01\xff";	
+}
+PUSH DownKey
+{
+
+ 	tx[activeCam] = CamAdress[activeCam]+"\x01\x06\x01"+BtnSpeed[1]+BtnSpeed[1]+"\x03\x02\xff";	
+}
+
+PUSH LeftKey
+{
+
+ 	tx[activeCam] = CamAdress[activeCam]+"\x01\x06\x01"+BtnSpeed[1]+BtnSpeed[1]+"\x01\x03\xff";	
+}
+
+PUSH RightKey
+{
+
+ 	tx[activeCam] = CamAdress[activeCam]+"\x01\x06\x01"+BtnSpeed[1]+BtnSpeed[1]+"\x02\x03\xff";	
+}
+RELEASE RightKey,LeftKey,UpKey,DownKey,Joystic_press
+{   
+	Delay(5);
+ 	tx[activeCam] = CamAdress[activeCam]+"\x01\x06\x01\x07\x07\x03\x03\xff";
+	xVectorContr = 0;
+	yVectorContr = 0;	
+}
+
+PUSH ZoomUp
+{
+    tx[activeCam] = CamAdress[activeCam]+"\x01\x04\x07\x02\xff";
+}
+PUSH ZoomDown
+{
+    tx[activeCam] = CamAdress[activeCam]+"\x01\x04\x07\x03\xff";
+}
+RELEASE ZoomDown,ZoomUp
+{
+    tx[activeCam] = CamAdress[activeCam]+"\x01\x04\x07\x00\xff";
+}
+
+    
+
+PUSH Presset
+{
+	but = GetLastModifiedArrayIndex();
+	hold_flag = 1;
+
+	activePresset = but;
+
+	wait(200,HoldWait)
+	{
+		if (hold_flag = 1)	// --- save presset
+		{
+	     	hold_flag = 0;
+			CamPresset[but] = activeCam;
+			presserData[activePresset].cam = activeCam;
+                                                
+//8x 09 06 12 FF			- inqry							- Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF	 	- WWWWzzzz: pan
+//8x 09 04 47 FF 		
+		
+			makestring(tx[activeCam],"%s\x09\x06\x12\xFF",CamAdress[presserData[activePresset].cam]);
+			delay(50);
+			makestring(tx[activeCam],"%s\x09\x04\x47\xFF",CamAdress[presserData[activePresset].cam]);
+			pulse(100,SaveOk);
+
+/*
+			makestring(tx[activeCam],"%s\x01\x04\x3f\x01%c\xff",CamAdress[activeCam],but);
+			pulse(100,SaveOk);
+			//tx[activeCam] = CamAdress[activeCam]+"\x01\x04\x3f\x01"+but+"\xff";//\x83\x01\x04\x3f\x02\x06\xff		
+*/
+		}
+	}
+}
+RELEASE Presset
+{
+	but = GetLastModifiedArrayIndex();
+
+	CancelWait(HoldWait);
+	if (hold_flag = 1)	// --- recal presset
+	{
+     	hold_flag = 0;
+		activeCam = presserData[activePresset].cam;
+		SelectCamFunc(activeCam);
+                                                
+//8x 01 06 02 VV WW 0Y 0Y 0Y 0Y 0Z 0Z 0Z 0Z FF			- v,w speed y,z - ptz
+//8x 01 04 47 0Z 0Z 0Z 0Z FF
+		
+		
+			makestring(tx[activeCam],"%s\x01\x06\x02\x18\x14%s\xFF",CamAdress[presserData[activePresset].cam],presserData[activePresset].ptz);
+			delay(50);
+			makestring(tx[activeCam],"%s\x01\x04\x47%s\xFF",CamAdress[presserData[activePresset].cam],presserData[activePresset].zoom);
+			//pulse(100,SaveOk);
+
+		//makestring(tx[activeCam],"%s\x01\x04\x3f\x02%c\xff",CamAdress[activeCam],but);
+		//tx[activeCam] = CamAdress[activeCam]+"\x01\x04\x3f\x02"+but+"\xff";		
+
+	}
+}
+       
+
+Change JoysticY//65535  JoysticX,
+{
+//xVector,yVector,xVectorContr,yVectorContr  xWay,yWay
+ 	xVector = JoysticX/JSpeedDelta;
+ 	yVector = JoysticY/JSpeedDelta;
+	if ((xVectorContr<>xVector)||(yVector<>yVectorContr))
+	{
+		CancelWait(CamGoWait);
+     	xVectorContr = xVector;
+		yVectorContr = yVector;
+	
+		if (xVector<=JoyscticSpeed)
+		{
+			xWay = "\x01";
+			xJSpeed = JoyscticSpeed - xVectorContr;
+		}
+		else
+		if (xVector>JoyscticSpeed+1)
+		{
+			xWay = "\x02";
+			xJSpeed = xVectorContr - JoyscticSpeed - 1;
+		}
+		else
+			xWay = "\x03";
+
+		if (yVector<=JoyscticSpeed)
+		{
+			yWay = "\x02";
+			yJSpeed = JoyscticSpeed - yVectorContr;
+		}
+		else
+		if (yVector>JoyscticSpeed+1)
+		{
+			yWay = "\x01";
+            yJSpeed = yVectorContr - JoyscticSpeed - 1; 	
+		}
+		else
+			yWay = "\x03";
+		
+		//CamGo ();
+
+		makestring(tx[activeCam],"%s\x01\x06\x01%c%c%s%s\xff",CamAdress[activeCam],xJSpeed,yJSpeed,xWay,yWay);
+	}
+}
+           
+
+//8x 01 06 02 VV WW 0Y 0Y 0Y 0Y 0Z 0Z 0Z 0Z FF			- v,w speed y,z - ptz
+//8x 09 06 12 FF		- inqry							- Y0 50 0W 0W 0W 0W 0Z 0Z 0Z 0Z FF	 	- WWWWzzzz: pan
+
+
+// zoom
+// 8x 01 04 47 0Z 0Z 0Z 0Z FF
+// 8x 09 04 47 FF 										- Y0 50 0Z 0Z 0Z 0Z FF 					- ZZZZ: position
+
+// 90 50 0z 0z 0z 0z ff		- 1я
+// A0 50 0z 0z 0z 0z ff		- 2я 
+// b0 50 01 00 0f 0e ff		- 3я камера
+
+
+Change rx
+{
+ 	While(find("\xff",rx))
+	{
+     	mini = remove("\xff",rx);
+
+		if (mid(mini,2,1) = "\x50")
+		{
+			trash = remove("\x50",mini);
+         	if (len(mini) = 9)
+			{
+        		presserData[activePresset].ptz = mid(mini,1,len(mini)-1);
+			}
+			else if (len(mini) = 5)
+			{
+        		presserData[activePresset].zoom = mid(mini,1,len(mini)-1);
+			}
+
+		}
+	}
+}
+
+/*
+RELEASE UpKey
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+CHANGE input
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+EVENT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETDISCONNECT
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETRECEIVE
+{
+    // TODO:  Add code here
+}
+*/
+
+/*
+SOCKETSTATUS
+{
+    // TODO:  Add code here
+}
+*/
+
+/*******************************************************************************************
+  Main()
+  Uncomment and place one-time startup code here
+  (This code will get called when the system starts up)
+*******************************************************************************************/
+
+Function Main()
+{
+	JSpeedDelta = 65535/(JoyscticSpeed*2+1);
+    Delay(100);
+		tx[1] = "\x88\x30\x01\xff";
+}
